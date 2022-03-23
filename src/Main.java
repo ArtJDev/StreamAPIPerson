@@ -1,4 +1,6 @@
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class Main {
     public static void main(String[] args) {
@@ -14,5 +16,28 @@ public class Main {
                     Education.values()[new Random().nextInt(Education.values().length)])
             );
         }
+
+        long count = persons.stream()
+                .filter(x -> x.getAge() < 18)
+                .count();
+        System.out.println("Количество несовершеннолетних = " + count);
+
+        Collection<String> warriors = persons.stream()
+                .filter(x -> x.getAge() >= 18)
+                .filter(x -> x.getAge() < 27)
+                .filter(x -> x.getSex() == Sex.MAN)
+                .map(Person::getFamily)
+                .collect(Collectors.toList());
+        System.out.println("Количество мужчин призывного возраста = " + warriors.size());
+
+        Stream<Person> stream1 = persons.stream()
+                .filter(x -> x.getEducation() == Education.HIGHER)
+                .filter(x -> x.getAge() >= 18 && x.getAge() < 65 && x.getSex() == Sex.MAN);
+        Stream<Person> stream2 = persons.stream()
+                .filter(x -> x.getEducation() == Education.HIGHER)
+                .filter(x -> x.getAge() >= 18 && x.getAge() < 60 && x.getSex() == Sex.WOMAN);
+        Collection<Person> workers = Stream.concat(stream1, stream2)
+                .sorted(Comparator.comparing(Person::getFamily))
+                .collect(Collectors.toList());
     }
 }
